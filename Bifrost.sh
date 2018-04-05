@@ -4,8 +4,9 @@
 #        Amn173         #
 #       04/02/18        #
 #########################
-#$COLUMNS, look,
-#util-linux
+#termux-info, shopt, set, bash --norc/--rcfile, 
+#dirs,pushd,popd
+#history, getprop, env, lscpu
 
 
 #Variables
@@ -68,7 +69,7 @@ function PrintHead(){
 	printf "%${Padding}s" && echo -e "${YLW}-----------------------------${NC}"
 	printf "%${Padding}s" && echo -e "${CYN} |\\ ${NC}${PRPL} -|- |-- |\\  /-\\ /-\\ /|\\ ${NC}"
 	printf "%${Padding}s" && echo -e "${CYN} | |  |${NC}${PRPL}  |   | | | | |    | ${NC}"
-	printf "%${Padding}s" && echo -e "${CYN} |/   |  |--${NC}${PRPL} |/  | | \\    | ${NC}"
+	printf "%${Padding}s" && echo -e "${CYN} |/   |  |--${NC}${PRPL} |/  | | \\   | ${NC}"
 	printf "%${Padding}s" && echo -e "${CYN} |\\   |  |   |\\ ${NC}${PRPL} | |   \\  | ${NC}"
 	printf "%${Padding}s" && echo -e "${CYN} | |  |  |   | \\ | |${NC}${PRPL}   |  | ${NC}"
 	printf "%${Padding}s" && echo -e "${CYN} |/  -|- |   | | \\-/ \\-/  ${NC}${PRPL}| ${NC}"
@@ -118,43 +119,59 @@ function InstallEssentials(){
 	PrintIntro
 	echo -e "${BLU}Packages To Install:${NC}"
 	echo -e "  ${CYN}Python 3${NC}"
+	pkg show python > PkgInfo 2>&1
+	echo -n "    " && grep -i version PkgInfo
+	echo -n "    " && grep -i download-size PkgInfo
+	echo -n "    " && grep -i installed-size PkgInfo
 	echo -e "  ${CYN}Python 2${NC}"
+	pkg show python2 > PkgInfo 2>&1
+	echo -n "    " && grep -i version PkgInfo
+	echo -n "    " && grep -i download-size PkgInfo
+	echo -n "    " && grep -i installed-size PkgInfo
 	echo -e "  ${CYN}Util-Linux${NC}"
+	pkg show util-linux > PkgInfo 2>&1
+	echo -n "    " && grep -i version PkgInfo
+	echo -n "    " && grep -i download-size PkgInfo
+	echo -n "    " && grep -i installed-size PkgInfo
+	rm PkgInfo
 	if ((Polled[1] == 0)); then
 		echo -e "${YLW}(C)ontinue or (A)bort${NC}"
 		read -n 1 -s
 		if [[ $REPLY =~ ^[Cc]$ ]]; then
 			echo -e "${YLW}Installing...${NC}"
-			yes | pkg install python > /dev/null 2>&1
-			yes | pkg install python2 > /dev/null 2>&1
-			yes | pkg install util-linux > /dev/null 2>&1
+			yes | pkg install python > /dev/null 2>&1 && echo "Python3 Installed"
+			yes | pkg install python2 > /dev/null 2>&1 && echo "Python2 Installed"
+			yes | pkg install util-linux > /dev/null 2>&1 && echo "Util-Linux Installed"
 		fi
 	else
-		echo -e "${RED}No Internet...${NC}"
+		echo -e "${RED}Seems There Is No Network${NC}"
+		RePoll=1
 		read -n 1 -r
 	fi
-	RePoll=1
 }
 
 #Install Bashrc
 function InstallBashrc(){
 	PrintHead
 	PrintIntro
-	echo -e "${BLU}Terminal Configuration Changes:${NC}"
-	echo -e "  ${CYN}Informative PS1${NC}"
-	echo -e "  ${CYN}Modified System Paths${NC}"
-	echo -e "  ${CYN}Add Color Globals${NC}"
+	echo -e "${BLU}Customized Bashrc:${NC}"
+	echo -e "  ${CYN}Optional At Load${NC}"
+	echo -e "  ${CYN}Pre-Set Color Codes${NC}"
+	echo -e "  ${CYN}Improved History Configuration${NC}"
+	echo -e "  ${CYN}Productive Prompting${NC}"
+	echo -e "  ${CYN}Aliases, Parameters, The Works...${NC}"
 	if ((Polled[1] == 0)); then
 		echo -e "${YLW}(C)ontinue or (A)bort${NC}"
 		read -n 1 -s
 		if [[ $REPLY =~ ^[Cc]$ ]]; then
-			echo "bashrc code here"
+			cd ~/
+			curl -LJO "" > /dev/null 2>&1 && echo ".bashrc Installed"
 		fi
 	else
-		echo -e "${RED}No Internet...${NC}"
+		echo -e "${RED}Seems There Is No Network...${NC}"
+		RePoll=1
 		read -n 1 -r
 	fi
-	RePoll=1
 }
 
 #Install Url-Opener
@@ -171,10 +188,11 @@ function InstallUrlOpener(){
 		echo -e "${YLW}(C)ontinue or (A)bort${NC}"
 		read -n 1 -r
 		if [[ $REPLY =~ ^[Cc]$ ]]; then
-			echo "url code here"
+			mkdir ~/bin && cd ~/bin
+			curl -LJO "" > /dev/null 2>&1 && echo "termux-url-opener Installed"
 		fi
 	else
-		echo -e "${RED}No Internet...${NC}"
+		echo -e "${RED}Seems There Is No Network${NC}"
 		read -n 1 -r
 	fi
 	RePoll=1
